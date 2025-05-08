@@ -1,0 +1,80 @@
+<section id="destinations" style="background-color: #f8f8f2; padding: 40px 0;">
+  <div class="container">
+    <!-- Titre principal -->
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 10px;">Destinations par engagement climatique</h2>
+      <p style="color: #666; max-width: 700px; margin: 0 auto;">
+        Découvrez les pays classés selon leur respect de l'Accord de Paris et leur performance climatique.
+      </p>
+    </div>
+    
+    <!-- Bloc de filtres -->
+    <div style="background-color: white; border-radius: 8px; padding: 20px; margin-bottom: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <form action="/countries" method="get" id="filter-form">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+          <!-- Filtre Continent -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 10px;">Continent</label>
+            <select name="continent" style="width: 100%; padding: 8px; border: 1px solid #e0e0e0; border-radius: 4px; background-color: #f9f9f9;">
+              <option value="">Tous les continents</option>
+              <option value="Europe">Europe</option>
+              <option value="Amérique du Nord">Amérique du Nord</option>
+              <option value="Amérique du Sud">Amérique du Sud</option>
+              <option value="Asie">Asie</option>
+              <option value="Afrique">Afrique</option>
+              <option value="Océanie">Océanie</option>
+            </select>
+          </div>
+          
+          <!-- Filtre Score climatique -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 10px;">Score climatique</label>
+            <div style="display: flex; gap: 5px;">
+              <% ['A', 'B', 'C', 'D', 'E', 'F', 'G'].each do |score| %>
+                <div class="score-badge" style="background-color: <%= score_color(score) %>;">
+                  <%= score %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          
+          <!-- Filtre Activité -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 10px;">Activité souhaitée</label>
+            <select name="activity" style="width: 100%; padding: 8px; border: 1px solid #e0e0e0; border-radius: 4px; background-color: #f9f9f9;">
+              <option value="">Toutes les activités</option>
+              <option value="Plage">Plage</option>
+              <option value="Montagne">Montagne</option>
+              <option value="Culture">Culture</option>
+              <option value="Nature">Nature</option>
+              <option value="Aventure">Aventure</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Titre Meilleures destinations -->
+    <h3 style="font-size: 22px; font-weight: bold; margin-bottom: 20px;">Meilleures destinations éco-responsables</h3>
+    
+    <!-- Liste des pays -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+      <% Country.where(score_letter_rating: ['A', 'B', 'C']).limit(3).each do |country| %>
+        <div style="background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          <div style="position: relative; height: 180px; overflow: hidden;">
+            <img src="<%= country.image_url %>" style="width: 100%; height: 100%; object-fit: cover;">
+            <div class="score-badge" style="position: absolute; top: 10px; right: 10px; background-color: <%= score_color(country.score_letter_rating) %>;">
+              <%= country.score_letter_rating %>
+            </div>
+          </div>
+          <div style="padding: 15px;">
+            <h4 style="font-size: 18px; margin-bottom: 5px;"><%= country.name %></h4>
+            <a href="/countries/<%= country.id %>" style="color: #16a34a; font-weight: 500; display: inline-block; margin-top: 5px;">
+              En savoir plus →
+            </a>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>

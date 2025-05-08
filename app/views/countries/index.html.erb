@@ -1,0 +1,339 @@
+<!-- Hero Section -->
+<section class="hero" style="background-image: url('https://images.unsplash.com/photo-1524338198850-8a2ff63aaceb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'); height: 300px;">
+  <div class="hero-overlay"></div>
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">Voyagez en accord avec la planète</h1>
+      <p class="hero-description">Choisissez vos destinations en fonction de leur engagement climatique et contribuez à un tourisme plus responsable.</p>
+      <div class="hero-buttons">
+        <a href="#destinations" class="btn-primary">
+          <i class="fas fa-globe"></i> Découvrir les destinations
+        </a>
+        <a href="/methodology" class="btn-secondary">
+          <i class="fas fa-clipboard-check"></i> Comprendre le classement
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section Destinations -->
+<section id="destinations" style="background-color: #f8f8f2; padding: 40px 0;">
+  <div class="container">
+    <!-- Titre principal -->
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 10px;">Destinations par engagement climatique</h2>
+      <p style="color: #666; max-width: 700px; margin: 0 auto;">
+        Découvrez les pays classés selon leur respect de l'Accord de Paris et leur performance climatique.
+      </p>
+    </div>
+    
+    <!-- Bloc de filtres -->
+    <div style="background-color: white; border-radius: 8px; padding: 20px; margin-bottom: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <form action="/countries" method="get" id="filter-form">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+          <!-- Filtre Continent -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 10px;">Continent</label>
+            <select name="continent" style="width: 100%; padding: 8px; border: 1px solid #e0e0e0; border-radius: 4px; background-color: #f9f9f9;">
+              <option value="" <%= params[:continent].blank? ? 'selected' : '' %>>Tous les continents</option>
+              <% ['Europe', 'Amérique du Nord', 'Amérique du Sud', 'Asie', 'Afrique', 'Océanie'].each do |continent| %>
+                <option value="<%= continent %>" <%= params[:continent] == continent ? 'selected' : '' %>>
+                  <%= continent %>
+                </option>
+              <% end %>
+            </select>
+          </div>
+          
+          <!-- Filtre Score climatique -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 10px;">Score climatique</label>
+            <div style="display: flex; gap: 5px;">
+              <% ['A', 'B', 'C', 'D', 'E', 'F', 'G'].each do |score| %>
+                <div style="position: relative;">
+                  <input type="checkbox" name="score[]" value="<%= score %>" id="score-<%= score %>" 
+                         <%= params[:score]&.include?(score) ? 'checked' : '' %>
+                         style="position: absolute; opacity: 0; cursor: pointer;">
+                  <label for="score-<%= score %>" 
+                         class="score-badge"
+                         style="background-color: <%= score_color(score) %>; opacity: <%= params[:score]&.include?(score) ? '1' : '0.8' %>; cursor: pointer;">
+                    <%= score %>
+                  </label>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          
+          <!-- Filtre Activité -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 10px;">Activité souhaitée</label>
+            <select name="activity" style="width: 100%; padding: 8px; border: 1px solid #e0e0e0; border-radius: 4px; background-color: #f9f9f9;">
+              <option value="" <%= params[:activity].blank? ? 'selected' : '' %>>Toutes les activités</option>
+              <% Activity.all.each do |activity| %>
+                <option value="<%= activity.name %>" <%= params[:activity] == activity.name ? 'selected' : '' %>>
+                  <%= activity.name %>
+                </option>
+              <% end %>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Titre Meilleures destinations -->
+    <h3 style="font-size: 22px; font-weight: bold; margin-bottom: 20px;">Meilleures destinations éco-responsables</h3>
+    
+    <!-- Liste des pays -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+      <% if @countries.any? %>
+        <% @countries.each do |country| %>
+          <div style="background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <div style="position: relative; height: 180px; overflow: hidden;">
+              <img src="<%= country.image_url %>" style="width: 100%; height: 100%; object-fit: cover;">
+              <div class="score-badge" style="position: absolute; top: 10px; right: 10px; background-color: <%= score_color(country.score_letter_rating) %>;">
+                <%= country.score_letter_rating %>
+              </div>
+            </div>
+            <div style="padding: 15px;">
+              <h4 style="font-size: 18px; margin-bottom: 5px;"><%= country.name %></h4>
+              <a href="/countries/<%= country.id %>" style="color: #16a34a; font-weight: 500; display: inline-block; margin-top: 5px;">
+                En savoir plus →
+              </a>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div style="grid-column: 1 / -1; text-align: center; padding: 40px 0; background-color: white; border-radius: 8px;">
+          <i class="fas fa-search" style="font-size: 48px; color: #d1d5db; margin-bottom: 16px;"></i>
+          <h3 style="font-size: 20px; margin-bottom: 8px;">Aucun résultat trouvé</h3>
+          <p style="color: #666; margin-bottom: 16px;">Aucun pays ne correspond à vos critères de recherche.</p>
+          <a href="/countries" style="display: inline-block; background-color: #16a34a; color: white; padding: 8px 16px; border-radius: 4px; font-weight: 600;">
+            Réinitialiser les filtres
+          </a>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- Section Carte mondiale -->
+<section id="world-map" style="background-color: white; padding: 60px 0;">
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 10px;">Carte mondiale des engagements climatiques</h2>
+      <p style="color: #666; max-width: 700px; margin: 0 auto;">
+        Explorez les performances climatiques des pays à travers le monde et leur avancement vers les objectifs de l'Accord de Paris.
+      </p>
+    </div>
+    
+    <div style="background-color: #f1f5f9; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+      <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+      <div id="map" style="width: 100%; height: 500px; border-radius: 8px;"></div>
+
+      <div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+        <% ['A', 'B', 'C', 'D', 'E', 'F', 'G'].each do |score| %>
+          <div style="display: flex; align-items: center;">
+            <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color(score) %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+              <%= score %>
+            </div>
+            <span>
+              <% case score %>
+              <% when 'A' %>Exemplaire
+              <% when 'B' %>Très bon
+              <% when 'C' %>Bon
+              <% when 'D' %>Moyen
+              <% when 'E' %>Médiocre
+              <% when 'F' %>Insuffisant
+              <% when 'G' %>Très médiocre
+              <% end %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          // Initialiser la carte
+          const map = L.map('map', {
+            minZoom: 2,
+            maxZoom: 10
+          }).setView([20, 0], 2);
+          
+          // Ajouter une couche de tuiles
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }).addTo(map);
+          
+          // Empêcher le défilement excessif
+          const southWest = L.latLng(-89.98155760646617, -180);
+          const northEast = L.latLng(89.99346179538875, 180);
+          const bounds = L.latLngBounds(southWest, northEast);
+          map.setMaxBounds(bounds);
+          map.on('drag', function() {
+            map.panInsideBounds(bounds, { animate: false });
+          });
+          
+          // Fonction pour déterminer la couleur en fonction du score
+          function getColor(score) {
+            switch(score) {
+              case 'A': return '#15803d'; // vert foncé
+              case 'B': return '#16a34a'; // vert
+              case 'C': return '#4ade80'; // vert clair
+              case 'D': return '#fcd34d'; // jaune
+              case 'E': return '#f59e0b'; // orange
+              case 'F': return '#f97316'; // orange foncé
+              case 'G': return '#ef4444'; // rouge
+              default: return '#9ca3af'; // gris
+            }
+          }
+          
+          // Charger les pays
+          fetch('/api/countries')
+            .then(response => response.json())
+            .then(countries => {
+              console.log("Données pays chargées:", countries.length, "pays");
+              
+              // Index des pays par code
+              const countriesMap = {};
+              countries.forEach(country => {
+                if (country.code) {
+                  countriesMap[country.code.toUpperCase()] = country;
+                }
+              });
+              
+              // Charger GeoJSON
+              fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
+                .then(response => response.json())
+                .then(geojson => {
+                  // Créer la couche GeoJSON
+                  const geoLayer = L.geoJSON(geojson.features, {
+                    style: function(feature) {
+                      const countryCode = feature.properties.ISO_A2;
+                      const country = countriesMap[countryCode];
+                      
+                      return {
+                        fillColor: country ? getColor(country.score_letter_rating) : '#e5e7eb',
+                        weight: 1,
+                        opacity: 1,
+                        color: 'white',
+                        fillOpacity: country ? 0.7 : 0.3
+                      };
+                    },
+                    onEachFeature: function(feature, layer) {
+                      const countryCode = feature.properties.ISO_A2;
+                      const country = countriesMap[countryCode];
+                      
+                      if (country) {
+                        // Popup pour les pays avec données
+                        const popupContent = `
+                          <div style="text-align: center;">
+                            <h3 style="margin: 0 0 5px; font-size: 16px;">${country.name}</h3>
+                            <div style="display: inline-block; width: 30px; height: 30px; border-radius: 50%; background-color: ${getColor(country.score_letter_rating)}; color: white; line-height: 30px; text-align: center; font-weight: bold; margin: 5px 0;">${country.score_letter_rating}</div>
+                            <p style="margin: 5px 0 10px; font-size: 14px; max-width: 250px;">${country.description ? (country.description.length > 100 ? country.description.substring(0, 100) + '...' : country.description) : 'Pas de description disponible.'}</p>
+                            <a href="/countries/${country.id}" style="display: inline-block; background-color: #16a34a; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-weight: bold;">Voir la fiche</a>
+                          </div>
+                        `;
+                        
+                        layer.bindPopup(popupContent);
+                        
+                        // Effet de survol
+                        layer.on('mouseover', function() {
+                          this.setStyle({
+                            weight: 2,
+                            color: '#666',
+                            fillOpacity: 0.9
+                          });
+                          this.bringToFront();
+                        });
+                        
+                        // Restaurer le style
+                        layer.on('mouseout', function() {
+                          geoLayer.resetStyle(this);
+                        });
+                      } else {
+                        // Popup pour les pays sans données
+                        layer.bindPopup(`
+                          <div style="text-align: center;">
+                            <h3 style="margin: 0 0 5px; font-size: 16px;">${feature.properties.ADMIN}</h3>
+                            <p style="margin: 5px 0;">Données climatiques non disponibles</p>
+                          </div>
+                        `);
+                      }
+                    }
+                  }).addTo(map);
+                })
+                .catch(error => {
+                  console.error("Erreur chargement GeoJSON:", error);
+                  document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; color: red;">Erreur lors du chargement de la carte.</div>';
+                });
+            })
+            .catch(error => {
+              console.error("Erreur chargement pays:", error);
+              document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; color: red;">Erreur lors du chargement des données.</div>';
+            });
+        });
+      </script>
+    </div>
+  </div>
+</section>
+
+<!-- Section Comprendre et Agir -->
+<section id="understand-act" style="background-color: #f8f8f2; padding: 60px 0;">
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 10px;">Comprendre et Agir</h2>
+      <p style="color: #666; max-width: 700px; margin: 0 auto;">
+        Découvrez comment les pays sont notés et comment vous pouvez contribuer à la lutte contre le changement climatique par vos choix de voyage.
+      </p>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+      <div style="background-color: white; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <h3 style="font-size: 20px; font-weight: bold; margin-bottom: 15px; color: #16a34a;">Notre méthodologie</h3>
+        <p style="margin-bottom: 20px;">
+          Notre système de notation s'appuie sur des données du Climate Change Performance Index (CCPI) et du Climate Action Tracker, évaluant les politiques climatiques des pays et leur alignement avec l'Accord de Paris.
+        </p>
+        <a href="/methodology" style="color: #16a34a; font-weight: 500; display: inline-flex; align-items: center;">
+          En savoir plus <span style="margin-left: 5px;">→</span>
+        </a>
+      </div>
+      
+      <div style="background-color: white; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <h3 style="font-size: 20px; font-weight: bold; margin-bottom: 15px; color: #16a34a;">Comment agir</h3>
+        <p style="margin-bottom: 20px;">
+          En tant que voyageur, vous pouvez influencer les politiques climatiques en choisissant des destinations responsables et en faisant entendre votre voix auprès des représentants diplomatiques.
+        </p>
+        <a href="/countries" style="color: #16a34a; font-weight: 500; display: inline-flex; align-items: center;">
+          Explorer les destinations <span style="margin-left: 5px;">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Script pour les filtres -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('input[name="score[]"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const label = this.nextElementSibling;
+        if (this.checked) {
+          label.style.opacity = '1';
+        } else {
+          label.style.opacity = '0.8';
+        }
+        document.getElementById('filter-form').submit();
+      });
+    });
+    
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+      select.addEventListener('change', function() {
+        document.getElementById('filter-form').submit();
+      });
+    });
+  });
+</script>

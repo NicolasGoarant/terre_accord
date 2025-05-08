@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <title>Terre d'Accord - Voyager en respectant l'Accord de Paris</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Plateforme de voyage éthique permettant aux utilisateurs de choisir leurs destinations en fonction du respect de l'Accord de Paris">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Polices -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Inter', sans-serif;
+        line-height: 1.5;
+        color: #333;
+      }
+      
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      
+      /* Navigation */
+      .navbar {
+        background-color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 15px 0;
+      }
+      
+      .navbar-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .navbar-logo {
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        color: #16a34a;
+        font-size: 18px;
+      }
+      
+      .navbar-logo i {
+        margin-right: 8px;
+        font-size: 20px;
+      }
+      
+      .navbar-links {
+        display: flex;
+        gap: 24px;
+      }
+      
+      .navbar-link {
+        color: #555;
+        font-weight: 500;
+      }
+      
+      .navbar-link:hover {
+        color: #16a34a;
+      }
+      
+      .navbar-button {
+        background-color: #16a34a;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-weight: 600;
+      }
+      
+      .navbar-button:hover {
+        background-color: #15803d;
+      }
+      
+      /* Boutons */
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #16a34a;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: 600;
+        transition: background-color 0.2s;
+      }
+      
+      .btn-primary:hover {
+        background-color: #15803d;
+      }
+      
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        color: #333;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: 600;
+        transition: background-color 0.2s;
+      }
+      
+      .btn-secondary:hover {
+        background-color: #f1f1f1;
+      }
+      
+      .btn-primary i, .btn-secondary i {
+        margin-right: 8px;
+      }
+      
+      /* Hero section */
+      .hero {
+        position: relative;
+        height: 70vh;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+      }
+      
+      .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+      }
+      
+      .hero-content {
+        position: relative;
+        z-index: 10;
+        color: white;
+        max-width: 600px;
+      }
+      
+      .hero-title {
+        font-size: 42px;
+        font-weight: bold;
+        margin-bottom: 16px;
+      }
+      
+      .hero-description {
+        font-size: 18px;
+        margin-bottom: 24px;
+      }
+      
+      .hero-buttons {
+        display: flex;
+        gap: 12px;
+      }
+      
+      /* Score badges */
+      .score-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        color: white;
+        font-weight: bold;
+      }
+      
+      /* Footer */
+      footer a:hover {
+        color: white !important;
+      }
+      
+      /* Media queries */
+      @media (max-width: 768px) {
+        .navbar-links {
+          display: none;
+        }
+        
+        .hero-title {
+          font-size: 32px;
+        }
+        
+        footer [style*="grid-template-columns"] {
+          grid-template-columns: 1fr !important;
+        }
+      }
+    </style>
+    
+    <%= yield :head %>
+  </head>
+
+  <body>
+    <!-- Barre de navigation -->
+    <nav class="navbar">
+      <div class="container navbar-container">
+        <a href="/" class="navbar-logo">
+          <i class="fas fa-globe"></i>
+          Terre d'Accord
+        </a>
+        
+        <div class="navbar-links">
+          <a href="/" class="navbar-link">Accueil</a>
+          <a href="/countries" class="navbar-link">Classement</a>
+          <a href="/countries?view=map" class="navbar-link">Carte</a>
+          <a href="/actions" class="navbar-link">Actions</a>
+        </div>
+        
+        <a href="/login" class="navbar-button">
+          Se connecter
+        </a>
+      </div>
+    </nav>
+
+    <%= yield %>
+  </body>
+</html>

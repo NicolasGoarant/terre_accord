@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md inline-flex items-center;
+  }
+
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded-md border border-gray-300 inline-flex items-center;
+  }
+
+  .score-badge {
+    @apply text-white font-bold w-10 h-10 flex items-center justify-center rounded-full;
+  }
+
+  .text-icon {
+    @apply inline-block align-text-bottom;
+  }
+}

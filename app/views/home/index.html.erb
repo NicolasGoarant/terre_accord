@@ -1,0 +1,225 @@
+<%# app/views/home/index.html.erb %>
+<%# Page d'accueil de Terre d'Accord %>
+
+<!-- Hero Section avec image de fond écologique -->
+<section class="hero" style="background-image: url('https://images.unsplash.com/photo-1524338198850-8a2ff63aaceb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'); background-position: center; background-size: cover; height: 80vh; position: relative;">
+  <div class="hero-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4);"></div>
+  <div class="container" style="position: relative; height: 100%; display: flex; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div class="hero-content" style="color: white; max-width: 650px;">
+      <h1 class="hero-title" style="font-size: 3rem; font-weight: bold; margin-bottom: 20px;">Voyagez en accord avec la planète</h1>
+      <p class="hero-description" style="font-size: 1.25rem; margin-bottom: 30px; line-height: 1.6;">Choisissez vos destinations en fonction de leur engagement climatique et contribuez à un tourisme plus responsable.</p>
+      <div class="hero-buttons" style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <a href="#destinations" class="btn-primary" style="background-color: #16a34a; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; transition: all 0.3s ease;">
+          <i class="fas fa-globe" style="margin-right: 8px;"></i> Découvrir les destinations
+        </a>
+        <a href="/methodology" class="btn-secondary" style="background-color: transparent; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; border: 2px solid white; display: inline-flex; align-items: center; transition: all 0.3s ease;">
+          <i class="fas fa-clipboard-check" style="margin-right: 8px;"></i> Comprendre le classement
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section Destinations -->
+<section id="destinations" style="background-color: #f8f8f2; padding: 60px 0;">
+  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <!-- Titre principal -->
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 15px; color: #333;">Destinations par engagement climatique</h2>
+      <p style="color: #666; max-width: 700px; margin: 0 auto; line-height: 1.6;">
+        Découvrez les pays classés selon leur respect de l'Accord de Paris et leur performance climatique.
+      </p>
+    </div>
+    
+    <!-- Bloc de filtres -->
+    <div class="filters-container" style="background-color: white; border-radius: 12px; padding: 25px; margin-bottom: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <form action="/countries" method="get" id="filter-form" style="margin: 0;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
+          <!-- Filtre Continent -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 10px; color: #333;">Continent</label>
+            <select name="continent" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; background-color: #f9f9f9; color: #333; font-size: 0.95rem;">
+              <option value="">Tous les continents</option>
+              <option value="Europe">Europe</option>
+              <option value="Amérique du Nord">Amérique du Nord</option>
+              <option value="Amérique du Sud">Amérique du Sud</option>
+              <option value="Asie">Asie</option>
+              <option value="Afrique">Afrique</option>
+              <option value="Océanie">Océanie</option>
+            </select>
+          </div>
+          
+          <!-- Filtre Score climatique -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 10px; color: #333;">Score climatique</label>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <% ['A', 'B', 'C', 'D', 'E', 'F', 'G'].each do |score| %>
+                <div style="width: 30px; height: 30px; border-radius: 50%; background-color: <%= score_color(score) %>; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer;">
+                  <%= score %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          
+          <!-- Filtre Activité -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 10px; color: #333;">Activité souhaitée</label>
+            <select name="activity" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; background-color: #f9f9f9; color: #333; font-size: 0.95rem;">
+              <option value="">Toutes les activités</option>
+              <option value="Plage">Plage</option>
+              <option value="Montagne">Montagne</option>
+              <option value="Culture">Culture</option>
+              <option value="Nature">Nature</option>
+              <option value="Aventure">Aventure</option>
+            </select>
+          </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 25px;">
+          <button type="submit" style="background-color: #16a34a; color: white; padding: 12px 30px; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; font-size: 1rem; display: inline-flex; align-items: center;">
+            <i class="fas fa-search" style="margin-right: 8px;"></i> Filtrer les destinations
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Meilleures destinations -->
+    <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 25px; color: #333;">Meilleures destinations éco-responsables</h3>
+    
+    <div class="countries-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px;">
+      <% Country.where(score_letter_rating: ['A', 'B']).limit(3).each do |country| %>
+        <div class="country-card" style="background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+          <div style="position: relative; height: 180px; overflow: hidden;">
+            <img src="<%= country.image_url %>" alt="<%= country.name %>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+            <div style="position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; background-color: <%= score_color(country.score_letter_rating) %>; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+              <%= country.score_letter_rating %>
+            </div>
+          </div>
+          <div style="padding: 20px;">
+            <h4 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 8px; color: #333;"><%= country.name %></h4>
+            <p style="color: #666; margin-bottom: 15px; line-height: 1.5;">
+              <%= truncate(country.description, length: 100) %>
+            </p>
+            <a href="/countries/<%= country.id %>" style="color: #16a34a; font-weight: 500; display: inline-flex; align-items: center; text-decoration: none;">
+              En savoir plus <i class="fas fa-arrow-right" style="margin-left: 5px; font-size: 0.8rem;"></i>
+            </a>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    
+    <div style="text-align: center; margin-top: 40px;">
+      <a href="/countries" style="background-color: #16a34a; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center;">
+        <i class="fas fa-globe" style="margin-right: 8px;"></i> Voir toutes les destinations
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Section Carte mondiale -->
+<section id="world-map" style="background-color: white; padding: 60px 0;">
+  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 15px; color: #333;">Carte mondiale des engagements climatiques</h2>
+      <p style="color: #666; max-width: 700px; margin: 0 auto; line-height: 1.6;">
+        Explorez les performances climatiques des pays à travers le monde et leur avancement vers les objectifs de l'Accord de Paris.
+      </p>
+    </div>
+    
+    <div class="map-container" style="background-color: #f1f5f9; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <!-- Intégration de la carte interactive -->
+      <%= render partial: "home/world_map" %>
+    </div>
+  </div>
+</section>
+
+<!-- Section Comprendre et Agir -->
+<%= render partial: "home/understand_act" %>
+
+<!-- Section Comment agir -->
+<section id="how-to-act" style="background-color: #f8f8f2; padding: 60px 0;">
+  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 15px; color: #333;">Comment agir pour le climat en voyageant</h2>
+      <p style="color: #666; max-width: 700px; margin: 0 auto; line-height: 1.6;">
+        Découvrez des actions concrètes pour réduire votre impact climatique tout en explorant le monde.
+      </p>
+    </div>
+    
+    <div class="actions-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">
+      <!-- Carte Action 1 -->
+      <div class="action-card" style="background-color: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+        <i class="fas fa-plane-departure" style="font-size: 42px; color: #16a34a; margin-bottom: 25px; display: block;"></i>
+        <h4 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 15px; color: #333;">Compensation carbone</h4>
+        <p style="color: #555; line-height: 1.6;">
+          Compensez les émissions carbone de vos vols en soutenant des projets de réduction d'émissions certifiés.
+        </p>
+      </div>
+      
+      <!-- Carte Action 2 -->
+      <div class="action-card" style="background-color: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+        <i class="fas fa-hotel" style="font-size: 42px; color: #16a34a; margin-bottom: 25px; display: block;"></i>
+        <h4 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 15px; color: #333;">Hébergements éco-responsables</h4>
+        <p style="color: #555; line-height: 1.6;">
+          Choisissez des hébergements certifiés écologiques qui respectent l'environnement et les communautés locales.
+        </p>
+      </div>
+      
+      <!-- Carte Action 3 -->
+      <div class="action-card" style="background-color: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+        <i class="fas fa-train" style="font-size: 42px; color: #16a34a; margin-bottom: 25px; display: block;"></i>
+        <h4 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 15px; color: #333;">Mobilité douce</h4>
+        <p style="color: #555; line-height: 1.6;">
+          Privilégiez le train et les transports en commun plutôt que l'avion ou la voiture pour réduire votre empreinte carbone.
+        </p>
+      </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 50px;">
+      <a href="/actions" class="btn-primary" style="background-color: #16a34a; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; transition: all 0.3s ease;">
+        <i class="fas fa-leaf" style="margin-right: 8px;"></i>
+        Toutes les actions possibles
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<%= render partial: "layouts/footer" %>
+
+<!-- Script pour les interactions -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Animation au survol des cartes pays
+  const countryCards = document.querySelectorAll('.country-card');
+  countryCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-5px)';
+      this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+      const img = this.querySelector('img');
+      if (img) img.style.transform = 'scale(1.05)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+      const img = this.querySelector('img');
+      if (img) img.style.transform = 'scale(1)';
+    });
+  });
+  
+  // Animation au survol des cartes d'action
+  const actionCards = document.querySelectorAll('.action-card');
+  actionCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-5px)';
+      this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+    });
+  });
+});
+</script>

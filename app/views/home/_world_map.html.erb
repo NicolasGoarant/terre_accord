@@ -1,0 +1,164 @@
+<< 'EOF'
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<div id="map" style="width: 100%; height: 500px; border-radius: 8px;"></div>
+
+<div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+  <div style="display: flex; align-items: center;">
+    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('A') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">A</div>
+    <span>Exemplaire</span>
+  </div>
+  <div style="display: flex; align-items: center;">
+    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('B') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">B</div>
+    <span>Très bon</span>
+  </div>
+  <div style="display: flex; align-items: center;">
+    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('C') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">C</div>
+    <span>Bon</span>
+  </div>
+  <div style="display: flex; align-items: center;">
+    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('D') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">D</div>
+    <span>Moyen</span>
+  </div>
+  <div style="display: flex; align-items: center;">
+    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('E') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">E</div>
+    <span>Médiocre</span>
+  </div>
+  <div style="display: flex; align-items: center;">
+    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('F') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">F</div>
+    <span>Insuffisant</span>
+  </div>
+  <div style="display: flex; align-items: center;">
+    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('G') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">G</div>
+    <span>Très médiocre</span>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialiser la carte
+    const map = L.map('map', {
+      minZoom: 2,
+      maxZoom: 10
+    }).setView([20, 0], 2);
+    
+    // Ajouter une couche de tuiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    
+    // Empêcher le défilement excessif en latitude
+    const southWest = L.latLng(-89.98155760646617, -180);
+    const northEast = L.latLng(89.99346179538875, 180);
+    const bounds = L.latLngBounds(southWest, northEast);
+    map.setMaxBounds(bounds);
+    map.on('drag', function() {
+      map.panInsideBounds(bounds, { animate: false });
+    });
+    
+    // Fonction pour déterminer la couleur en fonction du score
+    function getColor(score) {
+      switch(score) {
+        case 'A': return '#15803d'; // vert foncé
+        case 'B': return '#16a34a'; // vert
+        case 'C': return '#4ade80'; // vert clair
+        case 'D': return '#fcd34d'; // jaune
+        case 'E': return '#f59e0b'; // orange
+        case 'F': return '#f97316'; // orange foncé
+        case 'G': return '#ef4444'; // rouge
+        default: return '#9ca3af'; // gris
+      }
+    }
+    
+    // Charger les pays depuis notre API
+    fetch('/api/countries')
+      .then(response => response.json())
+      .then(countries => {
+        console.log("Données des pays chargées:", countries.length, "pays");
+        
+        // Créer un index des pays par code
+        const countriesMap = {};
+        countries.forEach(country => {
+          if (country.code) {
+            countriesMap[country.code.toUpperCase()] = country;
+          }
+        });
+        
+        // Charger les frontières géographiques des pays
+        fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
+          .then(response => response.json())
+          .then(geojson => {
+            console.log("Données GeoJSON chargées");
+            
+            // Créer une couche GeoJSON avec les styles appropriés
+            const geoLayer = L.geoJSON(geojson.features, {
+              style: function(feature) {
+                const countryCode = feature.properties.ISO_A2;
+                const country = countriesMap[countryCode];
+                
+                return {
+                  fillColor: country ? getColor(country.score_letter_rating) : '#e5e7eb',
+                  weight: 1,
+                  opacity: 1,
+                  color: 'white',
+                  fillOpacity: country ? 0.7 : 0.3
+                };
+              },
+              onEachFeature: function(feature, layer) {
+                const countryCode = feature.properties.ISO_A2;
+                const country = countriesMap[countryCode];
+                
+                if (country) {
+                  // Ajouter un popup avec les informations du pays
+                  const popupContent = `
+                    <div style="text-align: center;">
+                      <h3 style="margin: 0 0 5px; font-size: 16px;">${country.name}</h3>
+                      <div style="display: inline-block; width: 30px; height: 30px; border-radius: 50%; background-color: ${getColor(country.score_letter_rating)}; color: white; line-height: 30px; text-align: center; font-weight: bold; margin: 5px 0;">${country.score_letter_rating}</div>
+                      <p style="margin: 5px 0 10px; font-size: 14px; max-width: 250px;">${country.description ? (country.description.length > 100 ? country.description.substring(0, 100) + '...' : country.description) : 'Pas de description disponible.'}</p>
+                      <a href="/countries/${country.id}" style="display: inline-block; background-color: #16a34a; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-weight: bold;">Voir la fiche</a>
+                    </div>
+                  `;
+                  
+                  layer.bindPopup(popupContent);
+                  
+                  // Effet de survol
+                  layer.on('mouseover', function() {
+                    this.setStyle({
+                      weight: 2,
+                      color: '#666',
+                      fillOpacity: 0.9
+                    });
+                    this.bringToFront();
+                  });
+                  
+                  // Restaurer le style original
+                  layer.on('mouseout', function() {
+                    geoLayer.resetStyle(this);
+                  });
+                } else {
+                  // Pour les pays sans données
+                  layer.bindPopup(`
+                    <div style="text-align: center;">
+                      <h3 style="margin: 0 0 5px; font-size: 16px;">${feature.properties.ADMIN}</h3>
+                      <p style="margin: 5px 0;">Données climatiques non disponibles</p>
+                    </div>
+                  `);
+                }
+              }
+            }).addTo(map);
+          })
+          .catch(error => {
+            console.error("Erreur lors du chargement des données GeoJSON:", error);
+            // Afficher un message d'erreur sur la carte
+            document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; color: red;">Erreur lors du chargement de la carte. Veuillez réessayer.</div>';
+          });
+      })
+      .catch(error => {
+        console.error("Erreur lors du chargement des données des pays:", error);
+        // Afficher un message d'erreur sur la carte
+        document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; color: red;">Erreur lors du chargement des données. Veuillez réessayer.</div>';
+      });
+  });
+</script>
+EOF

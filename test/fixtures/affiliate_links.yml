@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  country: one
+  title: MyString
+  url: MyString
+  provider: MyString
+  link_type: MyString
+  clicks_count: 1
+  description: MyText
+
+two:
+  country: two
+  title: MyString
+  url: MyString
+  provider: MyString
+  link_type: MyString
+  clicks_count: 1
+  description: MyText
