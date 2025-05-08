@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  # Page d'accueil
+  root 'home#index'
   # API routes
   namespace :api do
     get "countries", to: "countries#index"
@@ -14,12 +16,25 @@ Rails.application.routes.draw do
   get "contact", to: "pages#contact"
   
   # Routes pour les pays
+  resources :countries, only: [:index, :show] do
+    resources :embassies, only: [:show] do
+      collection do
+        post 'contact'
+      end
+    end
+    resources :petitions, only: [:create]
+  end
   resources :countries, only: [:index, :show]
   
+  # Routes pour les activités
+  resources :activities, only: [:index]
   # Route pour contacter les ambassades
   get "countries/:id/contact", to: "embassy#contact", as: :embassy_contact
   post "countries/:id/contact", to: "embassy#send_message"
   
+  # Pages statiques
+  get '/about-methodology', to: 'pages#methodology'
+  get '/not-found', to: 'pages#not_found'
   # Route pour les actions (pétitions, etc.)
   resources :petitions, only: [:create]
   

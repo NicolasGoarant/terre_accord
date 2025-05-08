@@ -27,6 +27,7 @@
         font-family: 'Inter', sans-serif;
         line-height: 1.5;
         color: #333;
+        background-color: #f9fafb;
       }
       
       a {
@@ -45,6 +46,9 @@
         background-color: white;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         padding: 15px 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
       }
       
       .navbar-container {
@@ -59,6 +63,11 @@
         font-weight: 600;
         color: #16a34a;
         font-size: 18px;
+        transition: transform 0.2s;
+      }
+      
+      .navbar-logo:hover {
+        transform: scale(1.05);
       }
       
       .navbar-logo i {
@@ -74,10 +83,27 @@
       .navbar-link {
         color: #555;
         font-weight: 500;
+        position: relative;
+        padding: 5px 0;
       }
       
       .navbar-link:hover {
         color: #16a34a;
+      }
+      
+      .navbar-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #16a34a;
+        transition: width 0.3s;
+      }
+      
+      .navbar-link:hover::after {
+        width: 100%;
       }
       
       .navbar-button {
@@ -86,10 +112,14 @@
         padding: 8px 16px;
         border-radius: 4px;
         font-weight: 600;
+        box-shadow: 0 2px 4px rgba(22, 163, 74, 0.15);
+        transition: all 0.2s;
       }
       
       .navbar-button:hover {
         background-color: #15803d;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(22, 163, 74, 0.2);
       }
       
       /* Boutons */
@@ -102,11 +132,14 @@
         padding: 10px 20px;
         border-radius: 4px;
         font-weight: 600;
-        transition: background-color 0.2s;
+        box-shadow: 0 2px 4px rgba(22, 163, 74, 0.15);
+        transition: all 0.2s;
       }
       
       .btn-primary:hover {
         background-color: #15803d;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(22, 163, 74, 0.2);
       }
       
       .btn-secondary {
@@ -118,11 +151,14 @@
         padding: 10px 20px;
         border-radius: 4px;
         font-weight: 600;
-        transition: background-color 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s;
       }
       
       .btn-secondary:hover {
         background-color: #f1f1f1;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
       
       .btn-primary i, .btn-secondary i {
@@ -183,12 +219,309 @@
         font-weight: bold;
       }
       
+      .badge-a {
+        background-color: #15803d;
+      }
+      
+      .badge-b {
+        background-color: #16a34a;
+      }
+      
+      .badge-c {
+        background-color: #22c55e;
+      }
+      
+      .badge-d {
+        background-color: #eab308;
+        color: black;
+      }
+      
+      .badge-e {
+        background-color: #f59e0b;
+      }
+      
+      .badge-f {
+        background-color: #f97316;
+      }
+      
+      .badge-g {
+        background-color: #ef4444;
+      }
+      
+      /* Card styles */
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      .card-image {
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+      }
+      
+      .card-content {
+        padding: 20px;
+      }
+      
+      .card-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      
+      .card-meta {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #555;
+      }
+      
+      .card-meta i {
+        margin-right: 5px;
+        color: #16a34a;
+      }
+      
+      .card-text {
+        color: #555;
+        margin-bottom: 15px;
+      }
+      
+      /* Section styles */
+      .section {
+        padding: 60px 0;
+      }
+      
+      .section-title {
+        text-align: center;
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 40px;
+      }
+      
+      .section-title::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 3px;
+        background-color: #16a34a;
+        margin: 20px auto 0;
+      }
+      
+      /* Grid layouts */
+      .grid {
+        display: grid;
+        gap: 30px;
+      }
+      
+      .grid-cols-1 {
+        grid-template-columns: 1fr;
+      }
+      
+      .grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .grid-cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      /* Table styles */
+      .table-container {
+        overflow-x: auto;
+      }
+      
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      .table th, .table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      
+      .table th {
+        background-color: #f9fafb;
+        font-weight: 600;
+      }
+      
+      .table tr:hover {
+        background-color: #f9fafb;
+      }
+      
+      /* Form styles */
+      .form-group {
+        margin-bottom: 20px;
+      }
+      
+      .form-label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+      
+      .form-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        transition: border-color 0.2s;
+      }
+      
+      .form-input:focus {
+        outline: none;
+        border-color: #16a34a;
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+      }
+      
+      /* Badges */
+      .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 9999px;
+        text-transform: uppercase;
+      }
+      
+      .badge-green {
+        background-color: #dcfce7;
+        color: #15803d;
+      }
+      
+      .badge-yellow {
+        background-color: #fef9c3;
+        color: #854d0e;
+      }
+      
+      .badge-red {
+        background-color: #fee2e2;
+        color: #b91c1c;
+      }
+      
+      /* Alerts */
+      .alert {
+        padding: 12px 16px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      }
+      
+      .alert-success {
+        background-color: #dcfce7;
+        color: #15803d;
+        border-left: 4px solid #15803d;
+      }
+      
+      .alert-warning {
+        background-color: #fef9c3;
+        color: #854d0e;
+        border-left: 4px solid #eab308;
+      }
+      
+      .alert-error {
+        background-color: #fee2e2;
+        color: #b91c1c;
+        border-left: 4px solid #ef4444;
+      }
+      
       /* Footer */
-      footer a:hover {
-        color: white !important;
+      footer {
+        background-color: #0f172a;
+        color: #e2e8f0;
+        padding: 40px 0;
+      }
+      
+      .footer-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+      }
+      
+      .footer-column h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: white;
+      }
+      
+      .footer-links {
+        list-style: none;
+      }
+      
+      .footer-links li {
+        margin-bottom: 10px;
+      }
+      
+      .footer-links a {
+        color: #94a3b8;
+        transition: color 0.2s;
+      }
+      
+      .footer-links a:hover {
+        color: white;
+      }
+      
+      .footer-social {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+      }
+      
+      .footer-social a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        background-color: #1e293b;
+        border-radius: 50%;
+        color: white;
+        transition: background-color 0.2s;
+      }
+      
+      .footer-social a:hover {
+        background-color: #16a34a;
+      }
+      
+      .footer-bottom {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #1e293b;
+        color: #94a3b8;
+        font-size: 14px;
       }
       
       /* Media queries */
+      @media (max-width: 1024px) {
+        .footer-container {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .grid-cols-4 {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .grid-cols-3 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      
       @media (max-width: 768px) {
         .navbar-links {
           display: none;
@@ -198,9 +531,23 @@
           font-size: 32px;
         }
         
-        footer [style*="grid-template-columns"] {
-          grid-template-columns: 1fr !important;
+        .grid-cols-4, .grid-cols-3, .grid-cols-2 {
+          grid-template-columns: 1fr;
         }
+        
+        .footer-container {
+          grid-template-columns: 1fr;
+        }
+      }
+      
+      /* Animations */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      .animate-fadeIn {
+        animation: fadeIn 0.5s ease-out forwards;
       }
     </style>
     
@@ -224,11 +571,68 @@
         </div>
         
         <a href="/login" class="navbar-button">
+          <i class="fas fa-user mr-2"></i>
           Se connecter
         </a>
       </div>
     </nav>
 
-    <%= yield %>
+    <main>
+      <%= yield %>
+    </main>
+    
+    <!-- Pied de page -->
+    <footer>
+      <div class="container">
+        <div class="footer-container">
+          <div class="footer-column">
+            <h3>Terre d'Accord</h3>
+            <p style="color: #94a3b8; margin-bottom: 20px;">
+              Voyagez de manière écoresponsable en choisissant des destinations qui s'engagent pour le climat.
+            </p>
+            <div class="footer-social">
+              <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+              <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+              <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+          
+          <div class="footer-column">
+            <h3>Explorer</h3>
+            <ul class="footer-links">
+              <li><a href="/countries">Destinations</a></li>
+              <li><a href="/countries?view=map">Carte interactive</a></li>
+              <li><a href="/pages/methodology">Méthodologie</a></li>
+              <li><a href="/actions">Agir pour le climat</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-column">
+            <h3>Ressources</h3>
+            <ul class="footer-links">
+              <li><a href="/pages/about">À propos</a></li>
+              <li><a href="/pages/faq">FAQ</a></li>
+              <li><a href="/blog">Blog</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-column">
+            <h3>Légal</h3>
+            <ul class="footer-links">
+              <li><a href="/pages/terms">Conditions d'utilisation</a></li>
+              <li><a href="/pages/privacy">Politique de confidentialité</a></li>
+              <li><a href="/pages/cookies">Cookies</a></li>
+              <li><a href="/pages/legal">Mentions légales</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; <%= Time.now.year %> Terre d'Accord. Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
