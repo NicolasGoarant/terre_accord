@@ -19,3 +19,36 @@
     @apply inline-block align-text-bottom;
   }
 }
+
+/* Scores climatiques - couleurs par note */
+.score-a {
+  @apply bg-green-700 text-white;
+}
+
+.score-b {
+  @apply bg-green-500 text-white;
+}
+
+.score-c {
+  @apply bg-green-300 text-black;
+}
+
+.score-d {
+  @apply bg-yellow-400 text-black;
+}
+
+.score-e {
+  @apply bg-orange-400 text-white;
+}
+
+.score-f {
+  @apply bg-red-500 text-white;
+}
+
+.score-g {
+  @apply bg-red-700 text-white;
+}
+
+.climate-badge {
+  @apply inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm;
+}

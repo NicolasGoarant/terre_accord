@@ -2,7 +2,7 @@ class CountriesController < ApplicationController
   # Page principale de liste des pays avec filtres
   def index
     # Initialisation de la requête de base
-    @countries = Country.all.order(:name)
+    @countries = Country.all.order("CASE score_letter_rating WHEN 'A' THEN 1 WHEN 'B' THEN 2 WHEN 'C' THEN 3 WHEN 'D' THEN 4 WHEN 'E' THEN 5 WHEN 'F' THEN 6 WHEN 'G' THEN 7 ELSE 8 END, name")
     
     # Filtrage par continent
     if params[:continent].present?

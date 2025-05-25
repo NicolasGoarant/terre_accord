@@ -1,164 +1,199 @@
-<< 'EOF'
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<div class="world-map-container relative bg-blue-50 rounded-lg p-6">
+  <h3 class="text-xl font-bold text-center mb-4">Carte interactive des scores climatiques</h3>
+  
+  <!-- Debug pour voir vos données -->
+  <div id="debug-data" class="mb-4 p-2 bg-yellow-100 rounded text-sm"></div>
+  
+  <!-- Carte simple avec pays cliquables -->
+  <div class="relative mx-auto border rounded bg-blue-100" style="max-width: 900px; height: 400px; overflow: hidden;">
+    <div id="country-list" class="grid grid-cols-3 gap-4 p-6 h-full overflow-y-auto">
+      <!-- Les pays seront ajoutés ici par JavaScript -->
+    </div>
+  </div>
+  
+  <!-- Légende des scores -->
+  <div class="legend flex flex-wrap justify-center gap-4 mt-6 p-4 bg-white rounded-lg shadow-sm">
+    <div class="legend-item flex items-center gap-2">
+      <div class="w-4 h-4 rounded-full" style="background-color: #15803d;"></div>
+      <span class="text-sm">A - Exemplaire</span>
+    </div>
+    <div class="legend-item flex items-center gap-2">
+      <div class="w-4 h-4 rounded-full" style="background-color: #16a34a;"></div>
+      <span class="text-sm">B - Très bon</span>
+    </div>
+    <div class="legend-item flex items-center gap-2">
+      <div class="w-4 h-4 rounded-full" style="background-color: #4ade80;"></div>
+      <span class="text-sm">C - Bon</span>
+    </div>
+    <div class="legend-item flex items-center gap-2">
+      <div class="w-4 h-4 rounded-full" style="background-color: #fcd34d;"></div>
+      <span class="text-sm">D - Moyen</span>
+    </div>
+    <div class="legend-item flex items-center gap-2">
+      <div class="w-4 h-4 rounded-full" style="background-color: #f59e0b;"></div>
+      <span class="text-sm">E - Insuffisant</span>
+    </div>
+    <div class="legend-item flex items-center gap-2">
+      <div class="w-4 h-4 rounded-full" style="background-color: #f97316;"></div>
+      <span class="text-sm">F - Médiocre</span>
+    </div>
+    <div class="legend-item flex items-center gap-2">
+      <div class="w-4 h-4 rounded-full" style="background-color: #ef4444;"></div>
+      <span class="text-sm">G - Très médiocre</span>
+    </div>
+  </div>
+</div>
 
-<div id="map" style="width: 100%; height: 500px; border-radius: 8px;"></div>
-
-<div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
-  <div style="display: flex; align-items: center;">
-    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('A') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">A</div>
-    <span>Exemplaire</span>
-  </div>
-  <div style="display: flex; align-items: center;">
-    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('B') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">B</div>
-    <span>Très bon</span>
-  </div>
-  <div style="display: flex; align-items: center;">
-    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('C') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">C</div>
-    <span>Bon</span>
-  </div>
-  <div style="display: flex; align-items: center;">
-    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('D') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">D</div>
-    <span>Moyen</span>
-  </div>
-  <div style="display: flex; align-items: center;">
-    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('E') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">E</div>
-    <span>Médiocre</span>
-  </div>
-  <div style="display: flex; align-items: center;">
-    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('F') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">F</div>
-    <span>Insuffisant</span>
-  </div>
-  <div style="display: flex; align-items: center;">
-    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: <%= score_color('G') %>; margin-right: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">G</div>
-    <span>Très médiocre</span>
+<!-- Modal pour les détails des pays -->
+<div id="country-modal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black bg-opacity-50" onclick="closeModal()"></div>
+  <div class="relative flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+      <div class="p-6">
+        <div class="flex justify-between items-start mb-4">
+          <h3 id="modal-title" class="text-xl font-bold"></h3>
+          <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <div id="modal-content"></div>
+        <div class="mt-6 flex gap-3">
+          <button onclick="visitCountry()" id="visit-btn" class="flex-1 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+            Voir la destination
+          </button>
+          <button onclick="closeModal()" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Initialiser la carte
-    const map = L.map('map', {
-      minZoom: 2,
-      maxZoom: 10
-    }).setView([20, 0], 2);
-    
-    // Ajouter une couche de tuiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-    
-    // Empêcher le défilement excessif en latitude
-    const southWest = L.latLng(-89.98155760646617, -180);
-    const northEast = L.latLng(89.99346179538875, 180);
-    const bounds = L.latLngBounds(southWest, northEast);
-    map.setMaxBounds(bounds);
-    map.on('drag', function() {
-      map.panInsideBounds(bounds, { animate: false });
+let currentCountry = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+  loadCountries();
+});
+
+function loadCountries() {
+  fetch('/api/countries')
+    .then(response => response.json())
+    .then(countries => {
+      document.getElementById('debug-data').innerHTML = 
+        `Pays chargés: ${countries.length} (${countries.map(c => c.name).join(', ')})`;
+      displayCountries(countries);
+    })
+    .catch(error => {
+      document.getElementById('debug-data').innerHTML = 'Erreur: ' + error.message;
+      console.error('Erreur lors du chargement des pays:', error);
     });
+}
+
+function getScoreColor(score) {
+  switch(score) {
+    case 'A': return '#15803d';
+    case 'B': return '#16a34a';
+    case 'C': return '#4ade80';
+    case 'D': return '#fcd34d';
+    case 'E': return '#f59e0b';
+    case 'F': return '#f97316';
+    case 'G': return '#ef4444';
+    default: return '#e5e7eb';
+  }
+}
+
+function getScoreDescription(score) {
+  switch(score) {
+    case 'A': return 'Exemplaire';
+    case 'B': return 'Très bon';
+    case 'C': return 'Bon';
+    case 'D': return 'Moyen';
+    case 'E': return 'Insuffisant';
+    case 'F': return 'Médiocre';
+    case 'G': return 'Très médiocre';
+    default: return 'Non évalué';
+  }
+}
+
+function displayCountries(countries) {
+  const container = document.getElementById('country-list');
+  container.innerHTML = '';
+  
+  countries.forEach(country => {
+    const countryCard = document.createElement('div');
+    countryCard.className = 'bg-white rounded-lg p-4 shadow hover:shadow-lg cursor-pointer transition-all border-l-4';
+    countryCard.style.borderLeftColor = getScoreColor(country.score_letter_rating);
     
-    // Fonction pour déterminer la couleur en fonction du score
-    function getColor(score) {
-      switch(score) {
-        case 'A': return '#15803d'; // vert foncé
-        case 'B': return '#16a34a'; // vert
-        case 'C': return '#4ade80'; // vert clair
-        case 'D': return '#fcd34d'; // jaune
-        case 'E': return '#f59e0b'; // orange
-        case 'F': return '#f97316'; // orange foncé
-        case 'G': return '#ef4444'; // rouge
-        default: return '#9ca3af'; // gris
-      }
-    }
+    countryCard.innerHTML = `
+      <div class="flex items-center gap-3">
+        <div class="w-6 h-6 rounded-full" style="background-color: ${getScoreColor(country.score_letter_rating)}"></div>
+        <div>
+          <h4 class="font-semibold text-sm">${country.name}</h4>
+          <p class="text-xs text-gray-600">Score ${country.score_letter_rating}</p>
+        </div>
+      </div>
+    `;
     
-    // Charger les pays depuis notre API
-    fetch('/api/countries')
-      .then(response => response.json())
-      .then(countries => {
-        console.log("Données des pays chargées:", countries.length, "pays");
-        
-        // Créer un index des pays par code
-        const countriesMap = {};
-        countries.forEach(country => {
-          if (country.code) {
-            countriesMap[country.code.toUpperCase()] = country;
-          }
-        });
-        
-        // Charger les frontières géographiques des pays
-        fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
-          .then(response => response.json())
-          .then(geojson => {
-            console.log("Données GeoJSON chargées");
-            
-            // Créer une couche GeoJSON avec les styles appropriés
-            const geoLayer = L.geoJSON(geojson.features, {
-              style: function(feature) {
-                const countryCode = feature.properties.ISO_A2;
-                const country = countriesMap[countryCode];
-                
-                return {
-                  fillColor: country ? getColor(country.score_letter_rating) : '#e5e7eb',
-                  weight: 1,
-                  opacity: 1,
-                  color: 'white',
-                  fillOpacity: country ? 0.7 : 0.3
-                };
-              },
-              onEachFeature: function(feature, layer) {
-                const countryCode = feature.properties.ISO_A2;
-                const country = countriesMap[countryCode];
-                
-                if (country) {
-                  // Ajouter un popup avec les informations du pays
-                  const popupContent = `
-                    <div style="text-align: center;">
-                      <h3 style="margin: 0 0 5px; font-size: 16px;">${country.name}</h3>
-                      <div style="display: inline-block; width: 30px; height: 30px; border-radius: 50%; background-color: ${getColor(country.score_letter_rating)}; color: white; line-height: 30px; text-align: center; font-weight: bold; margin: 5px 0;">${country.score_letter_rating}</div>
-                      <p style="margin: 5px 0 10px; font-size: 14px; max-width: 250px;">${country.description ? (country.description.length > 100 ? country.description.substring(0, 100) + '...' : country.description) : 'Pas de description disponible.'}</p>
-                      <a href="/countries/${country.id}" style="display: inline-block; background-color: #16a34a; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-weight: bold;">Voir la fiche</a>
-                    </div>
-                  `;
-                  
-                  layer.bindPopup(popupContent);
-                  
-                  // Effet de survol
-                  layer.on('mouseover', function() {
-                    this.setStyle({
-                      weight: 2,
-                      color: '#666',
-                      fillOpacity: 0.9
-                    });
-                    this.bringToFront();
-                  });
-                  
-                  // Restaurer le style original
-                  layer.on('mouseout', function() {
-                    geoLayer.resetStyle(this);
-                  });
-                } else {
-                  // Pour les pays sans données
-                  layer.bindPopup(`
-                    <div style="text-align: center;">
-                      <h3 style="margin: 0 0 5px; font-size: 16px;">${feature.properties.ADMIN}</h3>
-                      <p style="margin: 5px 0;">Données climatiques non disponibles</p>
-                    </div>
-                  `);
-                }
-              }
-            }).addTo(map);
-          })
-          .catch(error => {
-            console.error("Erreur lors du chargement des données GeoJSON:", error);
-            // Afficher un message d'erreur sur la carte
-            document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; color: red;">Erreur lors du chargement de la carte. Veuillez réessayer.</div>';
-          });
-      })
-      .catch(error => {
-        console.error("Erreur lors du chargement des données des pays:", error);
-        // Afficher un message d'erreur sur la carte
-        document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; color: red;">Erreur lors du chargement des données. Veuillez réessayer.</div>';
-      });
+    countryCard.addEventListener('click', () => showCountryModal(country));
+    container.appendChild(countryCard);
   });
+}
+
+function showCountryModal(country) {
+  currentCountry = country;
+  
+  document.getElementById('modal-title').textContent = country.name;
+  
+  const content = `
+    <div class="space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-6 h-6 rounded-full" style="background-color: ${getScoreColor(country.score_letter_rating)}"></div>
+        <div>
+          <span class="font-semibold">Score climatique: ${country.score_letter_rating}</span>
+          <div class="text-sm text-gray-600">${getScoreDescription(country.score_letter_rating)}</div>
+        </div>
+      </div>
+      
+      <div>
+        <span class="font-semibold">Score CCPI:</span>
+        <span class="ml-2">${country.ccpi_score}</span>
+      </div>
+      
+      <div>
+        <span class="font-semibold">Continent:</span>
+        <span class="ml-2">${country.continent}</span>
+      </div>
+      
+      <div>
+        <span class="font-semibold">Description:</span>
+        <p class="text-sm text-gray-700 mt-1">${country.description}</p>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('modal-content').innerHTML = content;
+  document.getElementById('country-modal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('country-modal').classList.add('hidden');
+  currentCountry = null;
+}
+
+function visitCountry() {
+  if (currentCountry) {
+    window.location.href = `/countries/${currentCountry.id}`;
+  }
+}
+
+// Fermer la modal avec Escape
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeModal();
+  }
+});
 </script>
-EOF
